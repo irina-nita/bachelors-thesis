@@ -1,0 +1,10 @@
+{
+  "editor.formatOnSave": true,
+  "plantuml.server": "http://localhost:8080",
+  "plantuml.render": "PlantUMLServer",
+  "plantuml.exportOutDir": "diagrams/out",
+  "plantuml.exportIncludeFolderHeirarchy": false,
+  "plantuml.exportFormat": "svg",
+  "plantuml.diagramsRoot": "diagrams/src",
+  "plantuml.exportSubFolder": false,
+}
