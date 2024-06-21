@@ -173,8 +173,9 @@ The projects’ abstract will be elaborated in both Romanian and English. The re
 % WASM: Keywords: Viable, Sandbox, Platform Independent, Portable, Ubiquitous
 % TockOS: Keywords: Embedded, Rust, Hybrid in terms of kernel
 
-As microcontrollers (MCUs) are increasingly becoming more advanced, embedded software developers have the ability to leverage the hardware for building real-time systems that can run simultaniously multiple applications. This often implies running a memory-efficient operating system with the minimum requirement of scheduling critical applications. Most of these systems are written in low-level languages, usually C/C++, due to good performance and low memory footprint, but are prone to memory-related security vulnerabilities[1].\
-Tock is an operating system written in Rust, a low-level systems programming language similar to C. Unlike C, Rust offers memory safety features and implements some aspectes of the object-oriented paradigm.
+As microcontrollers (MCUs) are increasingly becoming more advanced, embedded software developers have the ability to leverage the hardware for building real-time systems that can run multiple applications simultaneously. Coordinating multiple tasks on a platform with limited resources, such as memory, implies running a memory-efficient operating system with at least a scheduler. Due to good performance and low memory footprint, most of these systems are written in low-level languages, usually C/C++, but are prone to memory-related security vulnerabilities[1].
+
+Tock is an operating system written in Rust, a low-level systems programming language similar to C. In addition to the much older alternative, Rust offers memory safety checks at compile time[2] and implements some aspects of the object-oriented paradigm[3]. The Rust feature seen most prominently in the Tock codebase is the separation between "safe" and "unsafe" code.
 
 \section{Motivation and Problem Statement} 
 
