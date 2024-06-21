@@ -4,7 +4,7 @@
   "plantuml.render": "PlantUMLServer",
   "plantuml.exportOutDir": "diagrams/out",
   "plantuml.exportIncludeFolderHeirarchy": false,
-  "plantuml.exportFormat": "svg",
+  "plantuml.exportFormat": "png",
   "plantuml.diagramsRoot": "diagrams/src",
   "plantuml.exportSubFolder": false,
 }

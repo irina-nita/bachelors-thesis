@@ -1,0 +1,20 @@
+@startuml wasm
+!theme materia-outline
+skinparam backgroundColor transparent
+skinparam shadowing false
+skinparam arrowThickness 2
+skinparam defaultFontName Monospaced
+
+file ".rs" as rs
+file ".wasm" as wasm
+file ".html" as html
+rectangle "Browser" as browser
+rectangle "WASM Virtual Machine" as vm
+
+rs -> wasm : Compiler with WASM target
+wasm -> html : JavaScript glue code
+html -> browser
+wasm -> vm
+html -[hidden]- vm
+
+@enduml
