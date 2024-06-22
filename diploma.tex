@@ -174,15 +174,23 @@ The projects’ abstract will be elaborated in both Romanian and English. The re
 % TockOS: Keywords: Embedded, Rust, Hybrid in terms of kernel
 
 As microcontrollers (MCUs) are increasingly becoming more advanced,
-embedded software developers have the ability to leverage the hardware to build real-time systems that can run multiple applications simultaneously. Coordinating multiple tasks on a platform with limited resources, such as memory, implies running a memory-efficient operating system with at least a scheduler. Due to good performance and
-low memory footprint, most systems are written in low-level languages, usually C/C++, but are prone to memory-related security vulnerabilities[1].
+embedded software developers have the ability to leverage the hardware to build real-time systems that can run multiple applications simultaneously. Coordinating multiple tasks on a platform with limited resources, such as memory, implies running a memory-efficient operating system with, at least, a scheduler. Due to good performance and low memory footprint, most systems are written in low-level languages, usually C/C++, but are prone to memory-related security vulnerabilities[1].
 
 Tock is an operating system written in Rust, a low-level systems programming language similar to C. In addition to the much older alternative, Rust offers memory safety checks at compile
-time[2] and implements some aspects of the object-oriented paradigm[3].
+time[2] and implements some aspects of the object-oriented programming paradigm[3].
 As illustrated in [1], the Rust feature seen most prominently in the Tock codebase is the separation between safe and unsafe code. The operating system kernel and microcontroller-specific peripheral drivers
 are considered "trusted" code (unsafe Rust is allowed); the drivers that define the application program interfaces (APIs) for user applications are deemed "untrusted" (unsafe Rust is forbidden).
 
-The abstraction acquired through Rust generics and traits (define here trait) ensures portability, allowing the driver implementations to remain agnostic regarding the hardware platform they are running on.
+The abstraction acquired in Tock through Rust generics and traits (similar to "interfaces" in other languages) ensures portability, allowing the drivers and kernel implementation to remain agnostic regarding the hardware platform they are running on. Therefore, Tock could eventually run on most targets if the minimum set of requirements for booting up the kernel on a platform is met. The support list, alongside the modern MCUs' most prevalent architectures (e.g. RISC-V, Cortex-M), could include a more unusual choice, WebAssembly (Wasm).
+
+WebAssembly is a binary instruction format that emerged from the Web's demand for interoperability with other programming languages, with the same or increased speed performance. Through the portability of the Wasm compilation target, code written in low-level languages (C, C++ or Rust) is able to run on any platfrom, either Web embedded (in Browser or a JavaScript virtual machine like node.js) or in a non-Web environment (custom WebAssembly runtimes).
+
+% \begin{figure}[th]
+% \centering
+% \includegraphics[scale=0.5]{diagrams/out/wasm.png}
+%   \caption{Mamaiemea}
+%   \label{fig:wasm}
+% \end{figure}
 
 \section{Motivation and Problem Statement} 
 
