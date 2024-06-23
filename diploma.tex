@@ -1,8 +1,10 @@
 \documentclass[12pt,a4paper]{report}
 
+\usepackage{float}
 \usepackage[utf8]{inputenc} % pentru suport diacritice
-\usepackage[romanian]{babel} % setări pentru limba română 
+\usepackage[english, romanian]{babel} % setări pentru limba română 
 \renewcommand\familydefault{\sfdefault} % sans serif
+
 
 \usepackage[margin=2.54cm]{geometry}	% dimensiuni pagină și margini
 \usepackage{graphicx} % support the \includegraphics command and options
@@ -128,7 +130,7 @@ COMPUTER SCIENCE AND ENGINEERING DEPARTMENT\\}
 %%   Campurile de mai jos trebuie modificate de autor. Modificati doar continutul, nu si numele fiecarei definitii
 %%
 \newcommand{\ProjectTitleRO}{Portarea unui sistem de operare pentru microprocesoare pe o platformă WebAssembly}
-\newcommand{\ProjectTitleEN}{Porting an Embedded Operating System on WebAssembly)}
+\newcommand{\ProjectTitleEN}{Porting an Embedded Operating System on WebAssembly}
 \newcommand{\Name}{Niță Irina-Cristina}
 \newcommand{\Advisor}{Prof. dr. ing. Răzvan Victor Rughiniș}
 \newcommand{\Year}{2024}
@@ -167,232 +169,166 @@ The projects’ abstract will be elaborated in both Romanian and English. The re
 % poate fi comentata sau stearsa
 \ThanksPage
 
+\selectlanguage{english}
 \chapter{Introduction}\pagestyle{fancy}
+This chapter...
 \section{Context}
 
 % WASM: Keywords: Viable, Sandbox, Platform Independent, Portable, Ubiquitous
 % TockOS: Keywords: Embedded, Rust, Hybrid in terms of kernel
-
 As microcontrollers (MCUs) are increasingly becoming more advanced,
-embedded software developers have the ability to leverage the hardware to build real-time systems that can run multiple applications simultaneously. Coordinating multiple tasks on a platform with limited resources, such as memory, implies running a memory-efficient operating system with, at least, a scheduler. Due to good performance and low memory footprint, most systems are written in low-level languages, usually C/C++, but are prone to memory-related security vulnerabilities[1].
+embedded software developers have the ability to leverage the hardware to build
+real-time systems that can run multiple applications simultaneously.
+Coordinating multiple tasks on a platform with limited resources, such as memory,
+implies running a memory-efficient operating system with, at least, a scheduler.
+Due to good performance and low memory footprint, most systems are written in low-level
+languages, usually C/C++, but are prone to memory-related security vulnerabilities.
 
-Tock is an operating system written in Rust, a low-level systems programming language similar to C. In addition to the much older alternative, Rust offers memory safety checks at compile
-time[2] and implements some aspects of the object-oriented programming paradigm[3].
-As illustrated in [1], the Rust feature seen most prominently in the Tock codebase is the separation between safe and unsafe code. The operating system kernel and microcontroller-specific peripheral drivers
-are considered "trusted" code (unsafe Rust is allowed); the drivers that define the application program interfaces (APIs) for user applications are deemed "untrusted" (unsafe Rust is forbidden).
+Tock is an operating system written in Rust, a low-level systems programming language similar to C, but memory-safe.
+As illustrated in \autoref{fig:tock},
+the Rust feature seen most prominently in the Tock codebase is the separation between
+safe and unsafe code. The operating system kernel and microcontroller-specific peripheral drivers
+are considered "trusted" code, i.e. unsafe Rust is allowed; the drivers that define the application
+program interfaces (APIs) for user applications are deemed "untrusted", i.e. unsafe Rust is forbidden.
 
-The abstraction acquired in Tock through Rust generics and traits (similar to "interfaces" in other languages) ensures portability, allowing the drivers and kernel implementation to remain agnostic regarding the hardware platform they are running on. Therefore, Tock could eventually run on most targets if the minimum set of requirements for booting up the kernel on a platform is met. The support list, alongside the modern MCUs' most prevalent architectures (e.g. RISC-V, Cortex-M), could include a more unusual choice, WebAssembly (Wasm).
+% TODO: Image of Tock here
 
-WebAssembly is a binary instruction format that emerged from the Web's demand for interoperability with other programming languages, with the same or increased speed performance. Through the portability of the Wasm compilation target, code written in low-level languages (C, C++ or Rust) is able to run on any platfrom, either Web embedded (in Browser or a JavaScript virtual machine like node.js) or in a non-Web environment (custom WebAssembly runtimes).
+\begin{figure}[H]
+\centering
+\includegraphics[scale=0.65]{pics/oxidos-stack.png}
+  \caption[Tock operating system software stack]{Tock operating system software stack}
+  \label{fig:tock}
+\end{figure}
 
-% \begin{figure}[th]
-% \centering
-% \includegraphics[scale=0.5]{diagrams/out/wasm.png}
-%   \caption{Mamaiemea}
-%   \label{fig:wasm}
-% \end{figure}
+The abstraction acquired in Tock through Rust generics and traits (similar to "interfaces"
+in other languages) ensures portability, allowing the drivers and kernel implementation to
+remain agnostic regarding the hardware platform they are running on. Therefore, Tock could
+eventually run on most targets if the minimum set of requirements for booting up the
+kernel on a platform is met. The support list, alongside the modern MCUs' most prevalent
+architectures (e.g. RISC-V, ARM), could include a more unusual choice, WebAssembly
+(Wasm).
+
+% TODO: Image of Wasm here
+\begin{figure}[H]
+\centering
+\includegraphics[scale=1.65]{pics/WebAssembly-high-level-architecture_W640-2.jpg}
+  \caption[WebAssembly high-level architecture]{WebAssembly high-level architecture}
+  \label{fig:wasm}
+\end{figure}
+
+WebAssembly is a binary instruction format that emerged from the Web's demand for interoperability with other programming languages, with the same or increased speed performance as native JavaScript. Through the portability of the Wasm compilation target, code written in low-level languages (C, C++ or Rust) is able to run on any platform, either Web embedded (in browser, e.g. Mozilla, or a JavaScript virtual machine, e.g. node.js) or in a non-Web environment (custom WebAssembly runtimes, e.g. Wasmtime). So, building Wasm support for an operating system inherently can be translated to building multi-platform support at once.
+
+% TODO: Unicorn (that is also wasm)
 
 \section{Motivation and Problem Statement} 
 
-\section{Objectives}
+The main goal of this thesis is to provide a virtual environment for Tock by running the operating system on a transparent platform. The system is currently supported on Cortex-M and RISC-V chips; thus, it can only be tested on a physical board or an emulated one with significant restrictions. Adding support for WebAssembly eliminates the need for a hardware emulator (e.g., Qemu) during the software development process.
 
-\section{Proposed Solution and Achieved Results}
+Part of Tock's porting process on Wasm consists of handling user applications through loading process binaries and handling system calls. Although the applications are not technically part of the operating system, Tock's virtualization process implies support for the whole environment, including user applications.
 
-\chapter{Analiza Cerințelor / Motivație}
-\dezvoltare Acest capitol va analiza cerințele produsului din prisma potențialilor clienți și a scenariilor de utilizare preconizate, urmând a fi generată o lista de funcționalități. 
+As of right now, the ability to run Tock locally is limited. The absence of physical hardware implies either using an architecture emulator, e.g., QEMU, which eliminates the idea of a simulation of peripherals, or third-party simulation software, e.g., WokWi, which is suitable for running a single embedded application on a well-known MCU but is restricted in terms of platforms it simulates and is not tailored to the operating system.
 
-\cercetare Acest capitol va introduce motivația realizării proiectului propus.
+\section{Proposed Solution}
 
-Dacă proiectul de licență face parte dintr-un proiect mai amplu (de exemplu un proiect complex, la care lucrează 2 studenți (ex: 1 student la front-end-ul aplicației, 1 student la back-end-ul aplicației), în acest capitol va fi explicat pe scurt ansamblul proiectului și ce parte din proiect este adresată de lucrarea propusă. 
+This thesis proposes an ecosystem incorporating support and tooling for developing Tock on users' machines, eliminating the necessity for physical hardware. The virtual platform comprises two components: the WebAssembly operating system kernel and the user applications that can be loaded into the platform's virtual flash memory.
 
-Criterii pentru calificativul \textit{Ne\textit{Satisfăcător}}: 
-\begin{itemize}
-	\item \dezvoltare Cerințele sunt imaginate de student pe baza unei analize a pieței;
-	\item \cercetare Nu se oferă o motivație valida.
-\end{itemize}
+The platform provides a debugger stub for the simulated environment to imitate the developing process on physical MCUs. This stub supports stepping through code, adding breakpoints, and getting information about registers and internal variables' values.
 
-Criterii pentru calificativul \textit{Satisfăcător}: 
-\begin{itemize}
-	\item \dezvoltare Există un interviu, un client, analiza cerințelor este elaborată pe baza interviului;
-	\item \cercetare Motivația este doar personala.
-\end{itemize}
+In addition to UART or timers, the simulation of hardware peripherals can extend to graphical-based interaction through communication between the user interface and the peripherals' behavior description protocol.
 
+Tock's process console, a small shell over serial communication (UART), is available by simulating hardware peripherals for more debugging support. Users can access it via a terminal emulator to inspect the kernel and control userspace processes.
 
-Criterii pentru calificativul \textit{Bine}: 
-\begin{itemize}
-	\item	 \dezvoltare Proces iterativ pe baza unor interviuri cu mai mulți clienți, dezvoltare MVP, reevaluare cerințe;
-	\item	 \cercetare Motivația este legata de o necesitate științifica / tehnica explicită.
-\end{itemize}
+\section{Thesis Structure}
 
+This paper begins with the background chapter, bringing the discussion into a theoretical context by providing introductory information on the technologies and terminology further used in the thesis.
 
-\chapter{Studiu de Piață / Metode Existente}
-\dezvoltare Ce soluții similare există pe piață? Care sunt limitările lor / pentru ce cazuri de utilizare sau pentru ce tip de clienți produsele existente pe piață nu răspund cerințelor? Care sunt indicatorii pe baza cărora sunt evaluate aceste produse, de către potențiali clienți, și unde sunt lipsurile/ care este oportunitatea generată de lipsurile acestea?
+The following chapter defines the architecture design for the system components at a higher level, remaining agnostic in implementation to the fullest extent possible.
 
-\cercetare Metode existente (sau ``State of the Art'') se referă, de regulă, la nivelul curent de dezvoltare: care este starea curentă a domeniului, unde ne găsim, care este contextul. Care sunt soluțiile actuale prezente în literatura de specialitate și care sunt limitările lor? Ce direcții de explorare sunt recomandate în literatura de specialitate? Literatura de specialitate se refera la articole științifice recente, publicate în reviste cu factor de impact mare, sau în volumele unor conferințe de top, sau în cărți.
+\chapter{Background}\pagestyle{fancy}
 
-\ambele În încheierea acestui capitol se dorește descrierea tehnologiilor folosite în lucrare, cu alternative și cu argumente convingătoare calitative și cantitative.  
+This chapter...
 
-Criterii pentru calificativul \textit{Ne\textit{Satisfăcător}}: 
-\begin{itemize}
-	\item \dezvoltare Sunt analizate superficial câteva produse de pe piață; 
-	\item \cercetare analiza literaturii limitata la grupuri de cercetare din România;
-	\item \ambele Sunt descrise tehnologiile folosite în lucrare. 
-\end{itemize}
+\section{Rust}
 
-Criterii pentru calificativul \textit{Satisfăcător}:
-\begin{itemize}
-	\item \dezvoltare Există un interviu, un client, analiza cerințelor este elaborată pe baza interviului.
-	\item \cercetare analiza literaturii de specialitate din lume, fără poziționarea precisă a lucrării în peisajului domeniului studiat;
-	\item \ambele Sunt descrise câteva tehnologii alternative pentru fiecare din tehnologiile folosite în lucrare. Există o argumentare referitoare la alegere.
-\end{itemize}
+\section{Tock}
 
-Criterii pentru calificativul \textit{Bine}:
-\begin{itemize}
-	\item \dezvoltare Proces iterativ pe baza unor interviuri cu mai mulți clienți, dezvoltare MVP, reevaluare cerințe;
-	\item \cercetare analiza literaturii de specialitate din lume, cu poziționarea precisă a lucrării în peisajul actual al domeniului studiat; 
-	\item \ambele Sunt descrise tehnologii alternative. Sunt analizate cantitativ și calitativ, folosite benchmarkuri și teste efectuate de student. Analiza este rezumată prin tabele și grafice.
-\end{itemize}
+Tock is an embedded operating system for low-power microcontrollers written in Rust, an alternative to the other candidate low-level programming languages like C. The Tock kernel is modular and comprises abstraction layers through Rust traits. As previously defined, Tock separates software-defined privilege rings by trustfulness, where allowing unsafe code is deemed an "act of trust." In other words, the closer the layer to necessary bare-metal programming, e.g., modifying registers, the more "trusted" the module. From a higher-level perspective, the operating system incorporates four components: the hardware interface layer, the microcontroller abstraction layer, the core kernel and the capsules.
 
-\section{Indicații formatare figuri}
+\subsection{Hardware Interface Layer (HIL)}
 
-Figurile utilizate în document vor fi centrate și numerotate (de exemplu Figura~\ref{fig:pic1}). 
-Orice figură ce nu este realizată de către autorul lucrării va fi în mod obligatoriu citată fie la final (de exemplu Figura ~\ref{fig:pic2} este preluată din documentul \cite{}), fie cel puțin într-o notă de subsol (a se vedea Figura~\ref{fig:pic2}). Orice figură ce depășește ca dimensiune 50\% dintr-o pagină, va fi mutată la anexe. Toate figurile din cadrul tezei vor fi referite în text. Exemplu: Figura~\ref{fig:pic1} prezintă o schemă de principiu pentru un amplificator inversor cu AO. 
+TODO..
 
-\begin{figure}[th]
-\centering
-\includegraphics{pics/Pic1.png}
-  \caption{Amplificator inversor}
-  \label{fig:pic1}
-\end{figure}
+\subsection{Microcontroller Abstraction Layer (MCAL)}
 
-\newpage
+TODO..
 
-\begin{figure}[th]
-\centering
-\includegraphics{pics/Pic2.png}
-  \caption[Amplificator de instrumentație cu 3 AO-uri]{Amplificator de instrumentație cu 3 AO-uri\protect\footnotemark}
-  \label{fig:pic2}
-\end{figure}
-\footnotetext{© http://www.ece.tamu.edu/sspalermo/ecen3205/Secton\%201III.pdf}
+\subsection{Capsules}
 
-\chapter{Soluția Propusă}
-Capitolul conține o privire de ansamblu a soluției ce rezolvă problema, prin prezentarea structurii / arhitecturii acesteia. În funcție de tipul lucrării acest capitol poate conține diagrame (clase, distribuție, workflow, entitate-relație), demonstrații de corectitudine pentru algoritmii propuși de autor, abordări teoretice (modelare matematică), structura hardware, arhitectura aplicației.
+TODO..
 
+...
 
-Criterii pentru calificativul \textit{Ne\textit{Satisfăcător}}: 
-\begin{itemize}
-	\item	Descriere în limbaj natural.
-\end{itemize}
+...
 
-Criterii pentru calificativul \textit{Satisfăcător}: 
-\begin{itemize}
-	\item	Descriere + diagrame de baze de date, workflow, clase, algoritmi. 
-\end{itemize}
+\section{WebAssembly and Deno}
 
-Criterii pentru calificativul \textit{Bine}: 
-\begin{itemize}
-	\item 	Descriere + diagrame de baze de date, workflow, clase, algoritmi + descrierea unui proces prin care s-a realizat arhitectura/structura soluției.
-\end{itemize}
+WebAssembly is a binary format that ...
 
-\section{Indicații formatare formule}
-Formulele matematice utilizate în document vor fi centrate în pagină și numerotate. 
+\section{Unicorn.js}
 
-\begin{equation}
-(x+a)^n = \sum_{k=0}^{n}\left(\begin{array}{c}n\\k\\\end{array}\right)x^ka^{n-k}
-\end{equation}
+Unicorn Engine is a lightweight CPU emulator framework based on QEMU. The core is written in pure C and supports multiple binding languages. One example is the Unicorn.js package for JavaScript, which was ported through WebAssembly.
 
-\begin{equation}
-f(x) = a_0 + \sum_{n=1}^{\infty}\left(a_n \cos\frac{n\pi x}{L} + b_n\sin\frac{n\pi x}{L}\right)
-\end{equation}
+The emulator API allows users to modify registers, allocate memory for the virtual CPU, or define hooks for specific instructions or events.
 
+\section{Remote GDB}
 
+Due to resource limitation on embedded systems, the debugging process is usually done remotely. The process includes a very lightweight stub written on the chip and a debugger server running on the MCU. This thesis will reference GDB as the debugger,
+but the LLDB protocol is very similar. (ref here)
+
+% TODO diagrama aici plmm
+
+\chapter{System Design and Architecture}
+
+This chapter elaborates on the platform's design and architecture...
+
+\section{WebAssembly kernel}
+
+In order to simulate a physical MCU, the virtual microcontroller must have defined platform-specific peripherals. Currently, the simulator chip implements the functionality of four peripherals: timer, UART, GPIO, and CAN, which can be separated into two types of virtual peripherals:
+the ones that can be dispatched to the user's system (timer, UART) and those that require simulation due to specific behaviors not directly found on one's local machine (GPIO, CAN). These peripherals must be configured and behave similarly to physical ones, regardless of their type.
+
+% image here
+[IMAGE HERE]
+
+The next part of this section will discuss the design for the second type of peripheral in more depth because, as illustrated in [1], the first type's design is considered straightforward.
+
+\section{Hardware-emulated userland processes and debugger}
+
+The userland applications are compiled to a Cortex-M4 target and run using a hardware emulator. Due to the operating system running in a Wasm virtual machine in a non-emulated environment, a context switch between the kernel and the user processes implies updating the context for the emulated MCU.
+
+Tock's context switch implementations are defined (separately from the microcontroller abstraction layer) for each supported architecture, being primarily written in inline assembly.
+
+The remote debugger used for the hardware emulated user applications is implemented accordingly to the remote GDB specifications.
+
+The stub server is running concurrently with the thread that runs the application, and share the
+same information about the MCU's state.
 
 \chapter{Implementation details}
-În plus fata de capitolul precedent acesta conține elemente specifice ale rezolvării problemei care au presupus dificultăți deosebite din punct de vedere tehnic. Pot fi incluse configurații, secvențe de cod, pseudo-cod, implementări ale unor algoritmi, analize ale unor date, scripturi de testare. De asemenea, poate fi detaliat modul în care au fost utilizate tehnologiile introduse in capitolul 3.
 
+This chapter...
 
-Criterii pentru calificativul \textit{Ne\textit{Satisfăcător}}: 
-\begin{itemize}
-	\item	Sunt prezentate pe scurt scheme și pseudo-cod.
-\end{itemize}
-Criterii pentru calificativul \textit{Satisfăcător}: 
-\begin{itemize}
-	\item	Descriere sumara a implementării, prezentarea unor secvențe nerelevante de cod, scheme, etc. 
-\end{itemize}
-Criterii pentru calificativul \textit{Bine}: 
-\begin{itemize}
-	\item	Descrierea detaliată a algoritmilor/structurilor utilizați; Prezentarea etapizată a dezvoltării, inclusiv cu dificultăți de implementare întâmpinate, soluții descoperite; (dacă este cazul) demonstrarea corectitudinii algoritmilor utilizați. 
-\end{itemize}
+\section{Microcontroller support for virtual platform}
 
-\section{Indicații formatare tabele}
-Se recomandă utilizarea tabelelor de forma celui de mai jos.  Font size :  9. 
-Orice tabel prezent în teză va fi referit în text; exemplu: a se vedea Tabel~\ref{tab:criterii}.
+\section{Deno virtual board}
 
-\begin{table}[th]\small\linespread{1}
-\caption{Sumarizare criterii}
-\label{tab:criterii}
-\begin{tabular}{l >{\raggedright\arraybackslash}p{8cm} >{\raggedright\arraybackslash}p{4cm}}
-\textbf{Calificativ} & \textbf{Criteriu} & \textbf{Observații} \\\hline
-\textbf{Nesatisfacator} & Sunt prezentate pe scurt scheme și pseudo-cod & \\\hline
-\textbf{Satisfacator} &Descriere sumara a implementării, prezentarea unor secvențe nerelevante de cod, scheme, etc.& \\
-\hline
-\textbf{\textit{Bine}} &Descrierea detaliată a algoritmilor/structurilor utilizați; Prezentarea etapizată a dezvoltării, inclusiv cu dificultăți de implementare întâmpinate, soluții descoperite; (dacă este cazul) demonstrarea corectitudinii algoritmilor utilizați. & Pot fi incluse configurații, secvente de cod, pseudo-cod, implementări ale unor algoritmi, analize ale unor date, scripturi de testare. \\
-\hline
-\end{tabular}
-\end{table}
+\section{Unicorn.js hardware-emulated user processes}
 
+\section{Context switch}
 
-\chapter{Evaluare}
-Acest capitol trebuie să răspundă, în principiu, la 2 întrebări și să se încheie cu o discuție a rezultatelor obținute. Cele doua întrebări la care trebuie sa se răspundă sunt:
-\begin{enumerate}
-	\item  \textbf{Merge corect?} (Conform specificațiilor extrase în capitolul 2); 
-Evaluarea dacă merge corect se face pe baza cerințelor identificate în capitolele anterioare. 
+\chapter{Evaluation}
 
-	\item Cât de \textit{Bine} merge / cum se compară cu soluțiile existente? (pe baza unor metrici clare). 
-Evaluarea cât de \textit{Bine} merge trebuie să fie bazată pe procente, timpi, cantitate, numere, \textbf{comparativ cu soluțiile prezentate în capitolul 3}. Poate fi vorba de performanță, overhead, resurse consumate, scalabilitate etc. 
-\end{enumerate}
+\chapter{Conclusions}
 
-În realizarea discuției, se vor utiliza tabele cu procente, rezultate numerice și grafice. În mod obișnuit, aici se fac comparații și teste comparative cu alte proiecte similare (dacă există) și se extrag puncte tari și puncte slabe. Se ține cont de avantajele menționate și se demonstrează viabilitatea abordării / aplicației, de dorit prin comparație cu alte abordări (dacă acest lucru este posibil). Cuvântul cheie la evaluare este ``metrică'': trebuie să aveți noțiuni măsurabile și cuantificabile. În cadrul procesului de evaluare, explicați datele, tabelele și graficele pe care le prezentați și insistați pe relevanța lor, în următorul stil: ``este de preferat ... deoarece …''; explicați cititorului nu doar datele ci și semnificația lor și cum sunt acestea interpretate. Din această interpretare trebuie să rezulte poziționarea proiectului vostru printre alternativele existente, precum și cum poate fi acesta îmbunătățit în continuare.
-
-Criterii pentru calificativul \textit{Ne\textit{Satisfăcător}}: 
-\begin{itemize}
-	\item Aplicația este testată dar rulează pe calculatorul studentului, nu există posibilități de testare, nu a fost validată cu clienți / utilizatori;
-	\item Nu au fost realizate comparații cu alte sisteme similare.
-\end{itemize}
-
-Criterii pentru calificativul \textit{Satisfăcător}: 
-\begin{itemize}
-	\item \dezvoltare  Există teste unitare și de integrare, există o strategie de punere în funcțiune (deployment), există validare minimală cu clienții / utilizatorii.
-	\item \cercetare Principalele componente și soluția în ansamblu au fost evaluate din punct de vedere al performanței, însă nu sunt folosite seturi de date standard, există unele erori de interpretare a datelor.
-	\item \ambele Discuție minimală asupra relevanței rezultatelor prezentate, comparație minimală cu alte sisteme similare.
-\end{itemize}
-
-Criterii pentru calificativul \textit{Bine}: 
-\begin{itemize}
-	\item \dezvoltare Teste unitare și de integrare, instrumente de punere in funcțiune (deployment) utilizate și care arată lucru constant de-a lungul semestrului, lucrare validată cu clienții / utilizatorii, produs în producție.
-	\item \cercetare Componentele și soluția în ansamblu au fost evaluate din punct de vedere al performanței, folosind seturi de date standard și cu o interpretare corectă a rezultatelor.
-	\item \ambele Discuție cu prezentarea calitativă și cantitativă a rezultatelor, precum și a relevanței acestor rezultate printr-o comparație complexă cu alte sisteme similare.
-\end{itemize}
-
-\chapter{Concluzii}
-În acest capitol este sumarizat întreg proiectul, de la obiective, la implementare, si la relevanta rezultatelor obținute. În finalul capitolului poate exista o subsecțiune de ``Dezvoltări ulterioare''.
-
-Criterii pentru calificativul \textit{Ne\textit{Satisfăcător}}: 
-\begin{itemize}
-	\item	Concluziile nu sunt corelate cu conținutul lucrării;
-\end{itemize}
-
-Criterii pentru calificativul \textit{Satisfăcător}: 
-\begin{itemize}
-	\item	Concluziile sunt corelate cu conținutul lucrării, însă nu se oferă o imagine asupra calității și relevantei rezultatelor obținute;
-\end{itemize}
-
-Criterii pentru calificativul \textit{Bine}: 
-\begin{itemize}
-	\item	Concluziile sunt corelate cu conținutul lucrării, și se oferă o imagine precisa asupra relevantei și calității rezultatelor obținute în cadrul proiectului. 
-\end{itemize}
-
-\chapter*{Bibliografie}\addcontentsline{toc}{chapter}{Bibliografie}  
+\chapter*{Bibliography}\addcontentsline{toc}{chapter}{Bibliography}  
 % * <marios.choudary@gmail.com> 2018-02-28T12:07:48.730Z:
 % 
 % > BIBLIOGRAFIE
